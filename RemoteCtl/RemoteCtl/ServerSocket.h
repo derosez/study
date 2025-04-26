@@ -173,6 +173,13 @@ public:
 		if (m_client == -1) return false;
 		return send(m_client,pak.Data(), pak.Size(), 0) > 0;
 	}
+	bool GetFilePath(std::string& strPath) {
+		if (m_pack.sCmd == 2) {
+			strPath = m_pack.strData;
+			return true;
+		}
+		return false;
+	}
 
 private:
 	SOCKET m_sock;
