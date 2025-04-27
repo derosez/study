@@ -20,8 +20,13 @@ public:
 		sHead = 0xFEFF;
 		nLength = nSize + 4;
 		sCmd = nCmd;
-		strData.resize(nSize);
-		memcpy((void*)strData.c_str(), pData, nSize);
+		if (nSize > 0) {
+			strData.resize(nSize);
+			memcpy((void*)strData.c_str(), pData, nSize);
+		}
+		else {
+			strData.clear();
+		}
 		sSum = 0;
 		for (size_t j = 0; j < strData.size(); j++) {
 			sSum += BYTE(strData[j]) & 0xFF;
@@ -174,7 +179,7 @@ public:
 		return send(m_client,pak.Data(), pak.Size(), 0) > 0;
 	}
 	bool GetFilePath(std::string& strPath) {
-		if (m_pack.sCmd == 2) {
+		if ((m_pack.sCmd == 2)|| (m_pack.sCmd == 3) || (m_pack.sCmd == 4)) {
 			strPath = m_pack.strData;
 			return true;
 		}
