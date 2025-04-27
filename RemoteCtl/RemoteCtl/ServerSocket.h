@@ -3,6 +3,7 @@
 #include "framework.h"
 #include<iostream>
 
+
 #pragma pack(push)
 #pragma pack(1)
 
@@ -147,9 +148,11 @@ public:
 		return true;
 	}
 	bool AcceptClient() {
+		TRACE("Enter AcceptClient!\r\n");
 		sockaddr_in client_addr;
 		int cln_sz = sizeof(client_addr);
 		m_client = accept(m_sock, (sockaddr*)&client_addr, &cln_sz);
+		TRACE("client: %d\r\n", m_client);
 		if (m_client == -1) {
 			return false;
 		}
@@ -161,22 +164,32 @@ public:
 			return -1;
 		}
 		char* buffer = new char[BUFFER_SIZE];
+		if (buffer == NULL) {
+			TRACE("内存不足\r\n");
+			return -2;
+		}
 		memset(buffer, 0, BUFFER_SIZE);
 		size_t index = 0;
 		while (true) {
 			size_t len = recv(m_client, buffer + index, BUFFER_SIZE - index, 0);
-			if (len <= 0) return -1;
+			if (len <= 0) {
+				delete[] buffer;
+				return -1;
+			}
+			TRACE("recv len = %d\r\n", len);
 			index += len;
 			len = index;
 			m_pack = CPacket((BYTE*)buffer, len);
 			if (len > 0) {
 				memmove(buffer, buffer + len, BUFFER_SIZE - len);
 				index -= len;
+				delete[] buffer;
 				return m_pack.sCmd;
 			}
 		}
 		//TODO:处理命令 
 		//return len;
+		delete[] buffer;
 		return -1;
 	}
 
@@ -204,6 +217,13 @@ public:
 			return true;
 		}
 		return false;
+	}
+	CPacket& GetPack() {
+		return m_pack;
+	}
+	void CloseClient() {
+		closesocket(m_client);
+		m_client = INVALID_SOCKET;
 	}
 private:
 	SOCKET m_sock;
