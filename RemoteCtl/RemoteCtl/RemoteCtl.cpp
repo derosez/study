@@ -273,6 +273,14 @@ int SendScreen() {
     return 0;
 }
 
+int LockMachine() {
+
+}
+
+int UnlockMachine() {
+
+}
+
 int main()
 {
     int nRetCode = 0;
@@ -328,6 +336,12 @@ int main()
                 break;
             case 6:// 发送屏幕内容==》发送屏幕截图
                 SendScreen();
+                break;
+            case 7://锁机
+                LockMachine();
+                break;
+            case 8://解锁
+                UnlockMachine();
                 break;
 
             }
