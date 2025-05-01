@@ -42,7 +42,7 @@ int MakeDriverInfo() {
     }
     CPacket pak(1, (BYTE*)result.c_str(), result.size());//打包
     Dump((BYTE*)pak.Data(), pak.Size());
-    //CServerSocket::getInstance()->Send(pak);
+    CServerSocket::getInstance()->Send(pak);
     return 0;
 }
 #include<stdio.h>
