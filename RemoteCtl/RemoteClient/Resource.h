@@ -12,7 +12,6 @@
 #define IDC_IPADDRESS_Serv              1002
 #define IDC_TREE_DIR                    1004
 #define IDC_LIST_FILE                   1005
-#define IDC_BUTTON1                     1006
 #define IDC_BTN_FILEINFO                1006
 
 // Next default values for new objects

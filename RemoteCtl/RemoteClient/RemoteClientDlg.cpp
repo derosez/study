@@ -67,7 +67,7 @@ void CRemoteClientDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TREE_DIR, m_Tree);
 }
 
-int CRemoteClientDlg::sendCommandPacket(int nCmd, BYTE* pData, size_t length)
+int CRemoteClientDlg::sendCommandPacket(int nCmd, bool bAutoClose, BYTE* pData, size_t length)
 {
 	UpdateData();
 	CClientSocket* pClient = CClientSocket::getInstance();
@@ -81,7 +81,9 @@ int CRemoteClientDlg::sendCommandPacket(int nCmd, BYTE* pData, size_t length)
 	TRACE("Send Ret = %d\r\n", Ret);
 	int cmd = pClient->DealCommand();
 	TRACE("ACK:%d\r\n", cmd);
-	pClient->CloseSocket();
+	if (bAutoClose) {
+		pClient->CloseSocket();
+	}
 	return cmd;
 }
 
@@ -91,6 +93,7 @@ BEGIN_MESSAGE_MAP(CRemoteClientDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BTN_TEST, &CRemoteClientDlg::OnBnClickedBtnTest)
 	ON_BN_CLICKED(IDC_BTN_FILEINFO, &CRemoteClientDlg::OnBnClickedBtnFileinfo)
+	ON_NOTIFY(NM_DBLCLK, IDC_TREE_DIR, &CRemoteClientDlg::OnNMDblclkTreeDir)
 END_MESSAGE_MAP()
 
 
@@ -207,13 +210,81 @@ void CRemoteClientDlg::OnBnClickedBtnFileinfo()
 	for (size_t i = 0; i < drivers.size(); i++) {
 		if (drivers[i] == ',') {
 			dr += ':';
-			m_Tree.InsertItem(dr.c_str(),TVI_ROOT,TVI_LAST);
+			HTREEITEM hTemp = m_Tree.InsertItem(dr.c_str(),TVI_ROOT,TVI_LAST);
+			m_Tree.InsertItem("", hTemp, TVI_LAST);
 			dr.clear();
 			continue;
 		}
 		dr += drivers[i];
 	}
 }
+
+CString CRemoteClientDlg::GetPath(HTREEITEM hTree) {
+
+	CString strRet, strTmp;
+	do {
+		strTmp = m_Tree.GetItemText(hTree);
+		strRet = strTmp + '\\' + strRet;
+		hTree = m_Tree.GetParentItem(hTree);
+	} while (hTree != NULL);
+
+	return strRet;
+}
+
+void CRemoteClientDlg::DeleteTreeChildrenItem(HTREEITEM hTree)
+{
+	HTREEITEM hSub = NULL;
+	do {
+		hSub = m_Tree.GetChildItem(hTree);
+		if (hSub != NULL) m_Tree.DeleteItem(hSub);
+	} while (hSub != NULL);
+}
+
+void CRemoteClientDlg::OnNMDblclkTreeDir(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	// TODO: 在此添加控件通知处理程序代码
+	*pResult = 0;
+	CPoint ptMouse;
+	GetCursorPos(&ptMouse);
+	m_Tree.ScreenToClient(&ptMouse);
+	HTREEITEM hTreeSelected = m_Tree.HitTest(ptMouse,0);
+	if (hTreeSelected == NULL) {
+		return;
+	}
+	if(m_Tree.GetChildItem(hTreeSelected) == NULL) return;
+	DeleteTreeChildrenItem(hTreeSelected);
+	CString strPath = GetPath(hTreeSelected);
+	sendCommandPacket(2,false, (BYTE*)(LPCSTR) strPath,strPath.GetLength());
+	PFILEINFO pInfo = (PFILEINFO)CClientSocket::getInstance()->GetPack().strData.c_str();
+	CClientSocket* pClient = CClientSocket::getInstance();
+	while (pInfo->HasNext){
+		if (pInfo->IsDirectory) {
+			if (CString(pInfo->szFilename) == "." || CString(pInfo->szFilename) == "..") {
+				int cmd = pClient->DealCommand();
+				TRACE("ack: %d\r\n", cmd);
+				if (cmd < 0)break;
+				pInfo = (PFILEINFO)CClientSocket::getInstance()->GetPack().Data();
+				continue;
+			}
+		}
+		
+		HTREEITEM hTemp = m_Tree.InsertItem(pInfo->szFilename, hTreeSelected, TVI_LAST);
+		if (pInfo->IsDirectory) {
+			m_Tree.InsertItem("", hTemp, TVI_LAST);
+		}
+		int cmd = pClient->DealCommand();
+		TRACE("ack: %d\r\n", cmd);
+		if (cmd < 0)break;
+		pInfo = (PFILEINFO)CClientSocket::getInstance()->GetPack().strData.c_str();
+	} 
+	
+	pClient->CloseSocket();
+}
+
+
+
+
+
 
 
 
