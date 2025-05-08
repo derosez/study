@@ -64,7 +64,7 @@ int MakeDirectoryInfo() {
         OutputDebugString(_T("没有权限访问目录！！\n"));
         TRACE("strPath: (%s)\r\n",strPath.c_str());
         return -2;
-    }
+    } 
     _finddata_t fdata;
     intptr_t hfind = 0;
     if ((hfind = _findfirst("*", &fdata)) == -1) {
