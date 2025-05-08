@@ -21,8 +21,10 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支持
 
 private:
+	void LoadFileCurrent();
 	void LoadFileInfo();
-	// 1 查看磁盘分区 2 查看指定目录下的文件 3 打开文件 4 下载文件
+	// 1 查看磁盘分区 2 查看指定目录下的文件 3 打开文件 4 下载文件 9 删除文件
+	// 5 鼠标操作 6 发送屏幕内容 7 锁机 8 解锁 1981 测试连接
 	//返回值是命令号，如果小于0，则是错误
 	int sendCommandPacket(int nCmd, bool bAutoClose = true,BYTE* pData = NULL,size_t length = 0);
 	CString GetPath(HTREEITEM hTree);
