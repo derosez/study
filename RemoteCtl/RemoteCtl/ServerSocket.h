@@ -126,10 +126,9 @@ typedef struct file_info {
 		memset(szFilename, 0, 256);
 	}
 	BOOL IsInvalid;//是否有效
-	char szFilename[256];//文件名
 	BOOL HasNext;// 是否还有后续 0 没有 1 有
 	BOOL IsDirectory; //是否为目录 0 否 1 是
-
+	char szFilename[256];//文件名
 
 }FILEINFO, * PFILEINFO;
 
@@ -217,7 +216,7 @@ public:
 
 	bool Send(CPacket& pak) {
 		if (m_client == -1) return false;
-		Dump((BYTE*)pak.Data(), pak.Size());
+		//Dump((BYTE*)pak.Data(), pak.Size());
 		return send(m_client,pak.Data(), pak.Size(), 0) > 0;
 	}
 	bool GetFilePath(std::string& strPath) {

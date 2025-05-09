@@ -6,6 +6,7 @@
 
 #pragma pack(push)
 #pragma pack(1)
+void Dump(BYTE* pData, size_t nSize);
 
 class CPacket {
 public:
@@ -56,6 +57,7 @@ public:
 		if (nLength > 4) {
 			strData.resize(nLength - 4);
 			memcpy((void*)strData.c_str(), pData + i, nLength - 4);
+			TRACE("%s\r\n",strData.c_str()+ 12);
 			i += nLength - 4;
 		}
 		sSum = *(WORD*)(pData + i); i += 2;
@@ -126,10 +128,9 @@ typedef struct file_info {
 		memset(szFilename, 0, 256);
 	}
 	BOOL IsInvalid;//是否有效
-	char szFilename[256];//文件名
 	BOOL HasNext;// 是否还有后续 0 没有 1 有
 	BOOL IsDirectory; //是否为目录 0 否 1 是
-
+	char szFilename[256];//文件名
 
 }FILEINFO, * PFILEINFO;
 
@@ -175,16 +176,16 @@ public:
 			return -1;
 		}
 		char* buffer = m_buffer.data();
-		memset(buffer, 0, BUFFER_SIZE);
-		size_t index = 0;
+		static size_t index = 0;
 		while (true) {
 			size_t len = recv(m_sock, buffer + index, BUFFER_SIZE - index, 0);
-			if (len <= 0) return -1;
+			if ((len <= 0) && (index == 0)) return -1;
+			//Dump((BYTE*)buffer, index);
 			index += len;
 			len = index;
 			m_pack = CPacket((BYTE*)buffer, len);
 			if (len > 0) {
-				memmove(buffer, buffer + len, BUFFER_SIZE - len);
+				memmove(buffer, buffer + len, index - len);
 				index -= len;
 				return m_pack.sCmd;
 			}
@@ -243,6 +244,7 @@ private:
 		}
 	//	m_sock = socket(PF_INET, SOCK_STREAM, 0);
 		m_buffer.resize(BUFFER_SIZE);
+		memset(m_buffer.data(), 0, BUFFER_SIZE);
 	}
 	~CClientSocket() {
 		closesocket(m_sock);
