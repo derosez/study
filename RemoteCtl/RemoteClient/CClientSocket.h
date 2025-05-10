@@ -57,7 +57,7 @@ public:
 		if (nLength > 4) {
 			strData.resize(nLength - 4);
 			memcpy((void*)strData.c_str(), pData + i, nLength - 4);
-			TRACE("%s\r\n",strData.c_str()+ 12);
+			//TRACE("%s\r\n",strData.c_str()+ 12);
 			i += nLength - 4;
 		}
 		sSum = *(WORD*)(pData + i); i += 2;
@@ -179,7 +179,7 @@ public:
 		static size_t index = 0;
 		while (true) {
 			size_t len = recv(m_sock, buffer + index, BUFFER_SIZE - index, 0);
-			if ((len <= 0) && (index == 0)) return -1;
+			if ((len <= 0) && (index  <= 0)) return -1;
 			//Dump((BYTE*)buffer, index);
 			index += len;
 			len = index;
