@@ -48,7 +48,7 @@ public:
 			nSize = 0;
 			return;
 		}
-		nLength = *(WORD*)(pData + i); i += 4;
+		nLength = *(DWORD*)(pData + i); i += 4;
 		if (nLength + i > nSize) {// 包未完全接受到
 			nSize = 0;
 			return;
@@ -89,7 +89,7 @@ public:
 		strOut.resize(nLength + 6);
 		BYTE* pData = (BYTE*)strOut.c_str();
 		*(WORD*)pData = sHead; pData += 2;
-		*(WORD*)pData = nLength; pData += 4;
+		*(DWORD*)pData = nLength; pData += 4;
 		*(WORD*)pData = sCmd; pData += 2;
 		memcpy(pData, strData.c_str(), strData.size()); pData += strData.size();
 		*(WORD*)pData = sSum;
@@ -170,7 +170,7 @@ public:
 		}
 		return true;
 	}
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 409600
 	int DealCommand() {
 		if (m_sock == -1) {
 			return -1;

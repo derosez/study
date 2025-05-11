@@ -242,7 +242,7 @@ int SendScreen() {
     BitBlt(screen.GetDC(), 0, 0, 1920, 1020, hScreen, 0, 0, SRCCOPY);
     ReleaseDC(NULL, hScreen);
    // DWORD tick = GetTickCount();
-    //screen.Save(_T("test2020.png"), Gdiplus::ImageFormatPNG);
+    //screen.Save(_T("test2020.png"), Gdiplus::ImageFormatJPEG);
     //TRACE("png %d\n", GetTickCount() - tick);
     //tick = GetTickCount();
     HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, 0);
