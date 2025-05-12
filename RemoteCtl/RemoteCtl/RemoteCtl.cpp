@@ -281,15 +281,29 @@ unsigned _stdcall threadLockDlg(void* arg) {
     rect.top = 0;
     rect.right = GetSystemMetrics(SM_CXFULLSCREEN);
     rect.bottom = GetSystemMetrics(SM_CYFULLSCREEN);
-    rect.bottom = LONG(rect.bottom * 1.03);
+    rect.bottom = LONG(rect.bottom * 1.10);
     dlg.MoveWindow(rect);
+    CWnd* pText = dlg.GetDlgItem(IDC_STATIC);
+    if (pText) {
+        CRect rtText;
+        pText->GetWindowRect(rtText);
+        int nWidth = rtText.Width();
+        int x = (rect.right - nWidth) / 2;
+        int nHeight = rtText.Height();
+        int y = (rect.bottom - nHeight) / 2;
+        pText->MoveWindow(x, y, rtText.Width(), rtText.Height());
+    }
     //窗口置顶
     dlg.SetWindowPos(&dlg.wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
     //限制鼠标功能
     ShowCursor(false);
     //隐藏任务栏
     ::ShowWindow(::FindWindow(_T("Shell_TrayWnd"), NULL), SW_HIDE);
-    // dlg.GetWindowRect(rect);
+     dlg.GetWindowRect(rect);
+     rect.left = 0;
+     rect.top = 0;
+     rect.right = 1;
+     rect.bottom = 1;
      //rect.right = rect.left + 1;
      //rect.bottom = rect.top + 1;
     ClipCursor(rect);//限制鼠标活动范围
@@ -304,8 +318,11 @@ unsigned _stdcall threadLockDlg(void* arg) {
             }
         }
     }
+    ClipCursor(NULL);
+    //恢复任务栏
     ::ShowWindow(::FindWindow(_T("Shell_TrayWnd"), NULL), SW_SHOW);
     dlg.DestroyWindow();
+    //恢复鼠标
     ShowCursor(true);
     _endthreadex(0);
     return 0;
