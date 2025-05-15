@@ -51,7 +51,7 @@ int MakeDriverInfo() {
 
 int MakeDirectoryInfo() {
     std::string strPath;
-    std::list<FILEINFO> lstFileInfos;
+    //std::list<FILEINFO> lstFileInfos;
     if (CServerSocket::getInstance()->GetFilePath(strPath) == false) {
         OutputDebugString(_T("当前的命令，不是获取文件列表，命令解析错误！"));
         return -1;
