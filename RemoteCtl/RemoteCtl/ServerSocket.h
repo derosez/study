@@ -37,8 +37,8 @@ public:
 			}
 			int ret = DealCommand();
 			if (ret > 0) {
-				m_callback(m_arg, ret, lstPackets,m_pack);
-				if (lstPackets.size() > 0) {
+				m_callback(m_arg, ret, lstPackets, m_pack);
+				while (lstPackets.size() > 0) {
 					Send(lstPackets.front());
 					lstPackets.pop_front();
 				}
@@ -127,24 +127,6 @@ protected:
 		if (m_client == -1) return false;
 		//Dump((BYTE*)pak.Data(), pak.Size());
 		return send(m_client,pak.Data(), pak.Size(), 0) > 0;
-	}
-	bool GetFilePath(std::string& strPath) {
-		if ((m_pack.sCmd == 2)|| (m_pack.sCmd == 3) ||
-			(m_pack.sCmd == 4) || (m_pack.sCmd == 9)) {
-			strPath = m_pack.strData;
-			return true;
-		}
-		return false;
-	}
-	bool GetMouseEvent(MOUSEEV& mouse) {
-		if (m_pack.sCmd == 5) {
-			memcpy(&mouse, m_pack.strData.c_str(), sizeof(MOUSEEV));
-			return true;
-		}
-		return false;
-	}
-	CPacket& GetPack() {
-		return m_pack;
 	}
 	void CloseClient() {
 		if (m_client != INVALID_SOCKET) {

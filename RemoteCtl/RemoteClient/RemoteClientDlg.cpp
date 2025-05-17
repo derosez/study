@@ -143,7 +143,7 @@ BOOL CRemoteClientDlg::OnInitDialog()
 	m_server_adress = 0xC0A83865;
 	m_nPort = _T("9527");
 	UpdateData(FALSE);
-	m_dlgStatus.Create(IDD_DLG_STATUS,this);
+	m_dlgStatus.Create(IDD_DLG_STATUS, this);
 	m_dlgStatus.ShowWindow(SW_HIDE);
 	m_isFull = false;
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
@@ -221,12 +221,17 @@ void CRemoteClientDlg::OnBnClickedBtnFileinfo()
 	for (size_t i = 0; i < drivers.size(); i++) {
 		if (drivers[i] == ',') {
 			dr += ':';
-			HTREEITEM hTemp = m_Tree.InsertItem(dr.c_str(),TVI_ROOT,TVI_LAST);
+			HTREEITEM hTemp = m_Tree.InsertItem(dr.c_str(), TVI_ROOT, TVI_LAST);
 			m_Tree.InsertItem("", hTemp, TVI_LAST);
 			dr.clear();
 			continue;
 		}
 		dr += drivers[i];
+	}
+	if(dr.size() > 0){
+		dr += ':';
+		HTREEITEM hTemp = m_Tree.InsertItem(dr.c_str(), TVI_ROOT, TVI_LAST);
+		m_Tree.InsertItem("", hTemp, TVI_LAST);
 	}
 }
 
