@@ -180,7 +180,7 @@ protected:
             } while (rlen >= 1024);
             fclose(pFile);
         }
-        lstPacket.push_back(CPacket(4, NULL, 0));
+        lstPacket.push_back(CPacket(4, NULL, 0));//TODo:else{} ???
 
         return 0;
     }
