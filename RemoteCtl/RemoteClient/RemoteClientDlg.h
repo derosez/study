@@ -35,19 +35,11 @@ public:
 private:
 	CImage m_image;//缓存
 	bool m_isFull;//缓存是否有数据 true表示有缓存数据 false表示没有缓存数据
-	bool m_isClosed;//监视是否关闭
 
 private:
-	static void threadEntryForWatchData(void* arg);
-	void threadWatchData();
-	static void threadEntryForDownFile(void* arg);
-	void threadDownFile();
 	void LoadFileCurrent();
 	void LoadFileInfo();
-	// 1 查看磁盘分区 2 查看指定目录下的文件 3 打开文件 4 下载文件 9 删除文件
-	// 5 鼠标操作 6 发送屏幕内容 7 锁机 8 解锁 1981 测试连接
-	//返回值是命令号，如果小于0，则是错误
-	int sendCommandPacket(int nCmd, bool bAutoClose = true,BYTE* pData = NULL,size_t length = 0);
+
 	CString GetPath(HTREEITEM hTree);
 	void DeleteTreeChildrenItem(HTREEITEM hTree);
 
@@ -79,4 +71,6 @@ public:
 	afx_msg LRESULT OnSendPacket(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnBnClickedBtnStartWatch();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnIpnFieldchangedIpaddressServ(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEnChangeEditPort();
 };
